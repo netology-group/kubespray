@@ -24,6 +24,8 @@ enforceNodeAllocatable:
 {% endif %}
 staticPodPath: {{ kube_manifest_dir }}
 cgroupDriver: {{ kubelet_cgroup_driver|default(kubelet_cgroup_driver_detected) }}
+containerLogMaxFiles: {{ kubelet_logfiles_max_nr }}
+containerLogMaxSize: {{ kubelet_logfiles_max_size }}
 maxPods: {{ kubelet_max_pods }}
 address: {{ kubelet_bind_address }}
 readOnlyPort: {{ kube_read_only_port }}
@@ -79,7 +81,7 @@ resolvConf: "{{ kube_resolv_conf }}"
 {% if kubelet_config_extra_args %}
 {{ kubelet_config_extra_args | to_nice_yaml(indent=2) }}
 {% endif %}
-{% if inventory_hostname in groups['kube-node'] and kubelet_node_config_extra_args %}
+{% if inventory_hostname in groups['kube_node'] and kubelet_node_config_extra_args %}
 {{ kubelet_node_config_extra_args | to_nice_yaml(indent=2) }}
 {% endif %}
 {% if tls_min_version is defined %}
@@ -90,4 +92,7 @@ tlsCipherSuites:
 {% for tls in tls_cipher_suites %}
 - {{ tls }}
 {% endfor %}
+{% endif %}
+{% if kubelet_event_record_qps %}
+eventRecordQPS: {{ kubelet_event_record_qps }}
 {% endif %}
